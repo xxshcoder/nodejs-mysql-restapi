@@ -1,0 +1,40 @@
+services:
+  mysql_db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: company_database
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    command: npm run dev
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    working_dir: /usr/src/app
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=mysql_db
+      - DB_USER=app_user
+      - DB_PASSWORD=app_password
+      - DB_NAME=company_database
+      - DB_PORT=3306
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
