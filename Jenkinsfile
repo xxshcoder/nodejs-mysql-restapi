@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/xxshcoder/nodejs-mysql-restapi.git'
+                git branch: 'master', url: 'https://github.com/xxshcoder/nodejs-mysql-restapi.git'
             }
         }
 
