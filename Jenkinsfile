@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'node:20-alpine' }  // Node.js preinstalled
+    }
 
     environment {
         DOCKER_IMAGE = "xxshcoder/nodejs-mysql-restapi"
@@ -9,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/xxshcoder/nodejs-mysql-restapi.git'
+                checkout scm
             }
         }
 
@@ -21,7 +23,6 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                // Optional if you have Jest/Supertest
                 sh 'npm test || echo "No tests found, skipping"'
             }
         }
